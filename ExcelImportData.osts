@@ -1,0 +1,32 @@
+function main(workbook: ExcelScript.Workbook,
+  arrayfromflow: object[],
+  sheetname: string
+) {
+  let selectedSheet = workbook.getActiveWorksheet();
+
+  selectedSheet.setName(sheetname);
+
+  const starterrow = 2;
+
+  function convertNumberToAlphabet(input: number): string {
+    let output: string = "";
+    let quotient: number = input;
+
+    while (quotient > 0) {
+      let remainder: number = (quotient - 1) % 26;
+      output = String.fromCharCode(65 + remainder) + output;
+      quotient = Math.floor((quotient - 1) / 26);
+    }
+    return output;
+  }
+
+  for (let i = 0; i < arrayfromflow.length; i++) {
+    const currentObject = arrayfromflow[i];
+
+    const formattedrow = [Object.keys(currentObject).map(key => currentObject[key])];
+    const columnsCounter = Object.values(currentObject).length;
+
+    const rowRange = `A${starterrow + i}:${convertNumberToAlphabet(columnsCounter)}${starterrow + i}`;
+    selectedSheet.getRange(rowRange).setValues(formattedrow);
+  }
+}
